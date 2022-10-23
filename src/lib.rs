@@ -1,8 +1,6 @@
 use std::f64;
-use std::fmt::format;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::console::log_1;
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
@@ -18,8 +16,6 @@ pub fn main_js() -> Result<(), JsValue> {
     #[cfg(debug_assertions)]
     console_error_panic_hook::set_once();
 
-    // start();
-
     Ok(())
 }
 
@@ -28,18 +24,18 @@ fn belongs_to_mandelbrot_set(x: f64, y: f64) -> bool {
     let complex_number_threshold = 10.0;
 
     let mut real_component = x;
-    let mut imaginaryComponent = y;
+    let mut imaginary_component = y;
 
     for _i in 0..maximum_iteration_limit {
         let _real_component =
-            real_component * real_component - imaginaryComponent * imaginaryComponent + x;
-        let _imaginary_component = 2.0 * real_component * imaginaryComponent + y;
+            real_component * real_component - imaginary_component * imaginary_component + x;
+        let _imaginary_component = 2.0 * real_component * imaginary_component + y;
 
         real_component = _real_component;
-        imaginaryComponent = _imaginary_component;
+        imaginary_component = _imaginary_component;
     }
 
-    real_component * imaginaryComponent < complex_number_threshold
+    real_component * imaginary_component < complex_number_threshold
 }
 
 #[wasm_bindgen]
@@ -72,14 +68,9 @@ pub fn draw() {
           (y as f64) / (magnification_factor as f64) - pan_y
         );
   
-        if (belongs_to_set) {
+        if belongs_to_set {
             context.fill_rect(x as f64, y as f64, 1.0, 1.0);
         }
       }
     }
   }
-
-#[wasm_bindgen]
-pub fn current_position(x: i32, y: i32) {
-    log_1(&JsValue::from(format!("{}, {}", x, y)))
-}
