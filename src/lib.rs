@@ -53,24 +53,32 @@ pub fn draw() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-
     canvas.set_width(1400);
     canvas.set_height(800);
-  
+
     let magnification_factor = 200;
     let pan_x = 3.0;
     let pan_y = 2.0;
-  
+
     for x in 0..canvas.width() {
         for y in 0..canvas.height() {
-        let belongs_to_set = belongs_to_mandelbrot_set(
-          (x as f64) / (magnification_factor as f64) - pan_x,
-          (y as f64) / (magnification_factor as f64) - pan_y
-        );
-  
-        if belongs_to_set {
-            context.fill_rect(x as f64, y as f64, 1.0, 1.0);
+            let belongs_to_set = belongs_to_mandelbrot_set(
+                (x as f64) / (magnification_factor as f64) - pan_x,
+                (y as f64) / (magnification_factor as f64) - pan_y,
+            );
+
+            if belongs_to_set {
+                context.fill_rect(x as f64, y as f64, 1.0, 1.0);
+            }
         }
-      }
     }
-  }
+}
+
+#[wasm_bindgen]
+pub fn fib(n: i8) -> i32 {
+    if n < 2 {
+        return n as i32;
+    }
+
+    fib(n - 1) + fib(n - 2)
+}
