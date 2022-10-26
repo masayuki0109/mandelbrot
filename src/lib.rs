@@ -1,6 +1,8 @@
 use std::f64;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use web_sys::CanvasRenderingContext2d;
+use web_sys::HtmlCanvasElement;
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
@@ -38,8 +40,7 @@ fn belongs_to_mandelbrot_set(x: f64, y: f64) -> bool {
     real_component * imaginary_component < complex_number_threshold
 }
 
-#[wasm_bindgen]
-pub fn draw() {
+fn create_canvas() -> (HtmlCanvasElement, CanvasRenderingContext2d) {
     let document = web_sys::window().unwrap().document().unwrap();
     let canvas = document.get_element_by_id("canvas").unwrap();
     let canvas: web_sys::HtmlCanvasElement = canvas
@@ -55,16 +56,22 @@ pub fn draw() {
 
     canvas.set_width(1400);
     canvas.set_height(800);
+    (canvas, context)
+}
 
-    let magnification_factor = 200;
-    let pan_x = 3.0;
-    let pan_y = 2.0;
+static MAGNIFICATION_FACTOR: i32 = 200;
+static PAN_X: f64 = 3.0;
+static PAN_Y: f64 = 2.0;
+
+#[wasm_bindgen]
+pub fn draw() {
+    let (canvas, context) = create_canvas();
 
     for x in 0..canvas.width() {
         for y in 0..canvas.height() {
             let belongs_to_set = belongs_to_mandelbrot_set(
-                (x as f64) / (magnification_factor as f64) - pan_x,
-                (y as f64) / (magnification_factor as f64) - pan_y,
+                (x as f64) / (MAGNIFICATION_FACTOR as f64) - PAN_X,
+                (y as f64) / (MAGNIFICATION_FACTOR as f64) - PAN_Y,
             );
 
             if belongs_to_set {
@@ -73,6 +80,25 @@ pub fn draw() {
         }
     }
 }
+// #[wasm_bindgen]
+// pub fn draw2() -> Vec<(f64, f64)> {
+//     let (canvas, context) = create_canvas();
+
+//     let mut result = vec![];
+//     for x in 0..canvas.width() {
+//         for y in 0..canvas.height() {
+//             let belongs_to_set = belongs_to_mandelbrot_set(
+//                 (x as f64) / (MAGNIFICATION_FACTOR as f64) - PAN_X,
+//                 (y as f64) / (MAGNIFICATION_FACTOR as f64) - PAN_Y,
+//             );
+
+//             if belongs_to_set {
+//                 result.push((x, y))
+//             }
+//         }
+//     }
+//     result
+// }
 
 #[wasm_bindgen]
 pub fn fib(n: i8) -> i32 {
