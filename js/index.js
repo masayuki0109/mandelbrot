@@ -3,10 +3,10 @@ import { fib } from "./fib";
 
 import("../pkg/index.js")
   .then((module) => {
-    withCalcTime(draw, undefined, "js");
-    withCalcTime(module.draw, undefined, "rust");
-    withCalcTime(fib, 35, "js");
-    withCalcTime(module.fib, 35, "rust");
+    withCalcTime(draw, undefined, "js mandelbrot");
+    withCalcTime(module.draw, undefined, "rust mandelbrot");
+    withCalcTime(fib, 35, "js fib");
+    withCalcTime(module.fib, 35, "rust fib");
   })
   .catch(console.error);
 

@@ -21,8 +21,31 @@ pub fn main_js() -> Result<(), JsValue> {
     Ok(())
 }
 
+fn create_canvas() -> (HtmlCanvasElement, CanvasRenderingContext2d) {
+    let document = web_sys::window().unwrap().document().unwrap();
+    let canvas = document.get_element_by_id("canvas").unwrap();
+    let canvas: web_sys::HtmlCanvasElement = canvas
+        .dyn_into::<web_sys::HtmlCanvasElement>()
+        .map_err(|_| ())
+        .unwrap();
+    let context = canvas
+        .get_context("2d")
+        .unwrap()
+        .unwrap()
+        .dyn_into::<web_sys::CanvasRenderingContext2d>()
+        .unwrap();
+
+    canvas.set_width(1000);
+    canvas.set_height(800);
+    (canvas, context)
+}
+
+static MAGNIFICATION_FACTOR: i32 = 200;
+static PAN_X: f64 = 3.0;
+static PAN_Y: f64 = 2.0;
+
 fn belongs_to_mandelbrot_set(x: f64, y: f64) -> bool {
-    let maximum_iteration_limit = 10;
+    let maximum_iteration_limit = 100;
     let complex_number_threshold = 10.0;
 
     let mut real_component = x;
@@ -40,28 +63,6 @@ fn belongs_to_mandelbrot_set(x: f64, y: f64) -> bool {
     real_component * imaginary_component < complex_number_threshold
 }
 
-fn create_canvas() -> (HtmlCanvasElement, CanvasRenderingContext2d) {
-    let document = web_sys::window().unwrap().document().unwrap();
-    let canvas = document.get_element_by_id("canvas").unwrap();
-    let canvas: web_sys::HtmlCanvasElement = canvas
-        .dyn_into::<web_sys::HtmlCanvasElement>()
-        .map_err(|_| ())
-        .unwrap();
-    let context = canvas
-        .get_context("2d")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        .unwrap();
-
-    canvas.set_width(1400);
-    canvas.set_height(800);
-    (canvas, context)
-}
-
-static MAGNIFICATION_FACTOR: i32 = 200;
-static PAN_X: f64 = 3.0;
-static PAN_Y: f64 = 2.0;
 
 #[wasm_bindgen]
 pub fn draw() {
@@ -80,25 +81,6 @@ pub fn draw() {
         }
     }
 }
-// #[wasm_bindgen]
-// pub fn draw2() -> Vec<(f64, f64)> {
-//     let (canvas, context) = create_canvas();
-
-//     let mut result = vec![];
-//     for x in 0..canvas.width() {
-//         for y in 0..canvas.height() {
-//             let belongs_to_set = belongs_to_mandelbrot_set(
-//                 (x as f64) / (MAGNIFICATION_FACTOR as f64) - PAN_X,
-//                 (y as f64) / (MAGNIFICATION_FACTOR as f64) - PAN_Y,
-//             );
-
-//             if belongs_to_set {
-//                 result.push((x, y))
-//             }
-//         }
-//     }
-//     result
-// }
 
 #[wasm_bindgen]
 pub fn fib(n: i8) -> i32 {

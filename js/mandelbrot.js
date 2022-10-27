@@ -1,5 +1,5 @@
 function belongsToMandelbrotSet(x, y) {
-  const MAXIMUM_ITERATION_LIMIT = 10;
+  const MAXIMUM_ITERATION_LIMIT = 100;
   const COMPLEX_NUMBER_THRESHOLD = 10;
 
   let realComponent = x;
@@ -21,7 +21,7 @@ function belongsToMandelbrotSet(x, y) {
 
 export function draw() {
   const canvas = document.createElement("canvas");
-  canvas.width = 1400;
+  canvas.width = 1000;
   canvas.height = 800;
   document.body.appendChild(canvas);
   const ctx = canvas.getContext("2d");
